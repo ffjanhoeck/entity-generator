@@ -1,0 +1,16 @@
+{
+  "name": "estate-generator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "run": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^0.20.0",
+    "cli-color": "^2.0.0",
+    "faker": "^5.1.0",
+    "form-data": "^3.0.0",
+    "readline-sync": "^1.4.10"
+  }
+}
