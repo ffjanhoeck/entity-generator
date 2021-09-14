@@ -4,6 +4,7 @@ const axios = require('axios');
 const faker = require('faker');
 const fileSystem = require('fs');
 const FormData = require('form-data');
+const chunkArray = require('chunk-array').chunks;
 
 const addresses = JSON.parse(fileSystem.readFileSync('addresses.json'));
 const API_STAGES = ['development', 'staging', 'production'];
@@ -81,14 +82,14 @@ const main = async () => {
     // Get the cognito token, to send call against the platform
     const cognitoToken = readlineSync.question(`Please tell me your cognito token for ${apiStage}`);
 
-    for (let index = 0; index < Number(estateAmount); index++) {
-        console.log(`${index + 1}/${Number(estateAmount)}`);
-        try {
-            const entityId = await createEntity(apiStage, cognitoToken);
-            //await uploadEntityImage(entityId, apiStage, cognitoToken);
-        } catch(error) {
-            console.error(error);
-        }
+    const tempArray = Array.from({ length: estateAmount }, (v, i) => i);
+    const chunks = chunkArray(tempArray, 50);
+
+    let chunkIndex = 0;
+    for (const chunk of chunks) {
+        console.log(`processing chunk index ${chunkIndex}`);
+        await Promise.all(chunk.map(() => createEntity(apiStage, cognitoToken)));
+        chunkIndex++;
     }
 }
 
